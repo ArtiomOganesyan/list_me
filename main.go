@@ -14,6 +14,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
+// {th!2345
 func main() {
 
 	err := godotenv.Load()
@@ -22,12 +23,11 @@ func main() {
 	}
 
 	var DbAddr string = os.Getenv("DB_ADDR")
-
 	if DbAddr == "" {
 		log.Fatalf("DB_ADDR is not set")
 	}
 
-	var Port string = ":3000"
+	var Port string = os.Getenv("PORT")
 
 	storage, err := db.NewStorage(DbAddr)
 	if err != nil {
