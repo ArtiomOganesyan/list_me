@@ -1,7 +1,9 @@
 package server
 
 import (
+	"database/sql"
 	"encoding/json"
+	"errors"
 	"list_me/db"
 	"net/http"
 	"sort"
@@ -29,6 +31,10 @@ func (s *Server) GetList(w http.ResponseWriter, r *http.Request) {
 
 	list, err := s.Store.GetList(id, secret)
 	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			errorResponse(w, http.StatusNotFound, err)
+			return
+		}
 		errorResponse(w, http.StatusInternalServerError, err)
 		return
 	}

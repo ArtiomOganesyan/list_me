@@ -5,32 +5,35 @@ const listContainer = document.getElementById("list-container");
 const uuidSpan = document.getElementById("uuid");
 const shareButton = document.getElementById("share");
 const addItemForm = document.forms["add-item-form"];
+const listLabel = document.getElementById("label-show-input-container");
 
 // ==========================================
 // CHECK FOR LIST ID
 // ==========================================
+const urlParams = new URLSearchParams(window.location.search);
+id = urlParams.get("id");
+secret = urlParams.get("secret");
 
 let localData = JSON.parse(localStorage.getItem("listmeta") || "{}");
-let { listID, secret } = localData;
-const urlParams = new URLSearchParams(window.location.search);
 
-if (!listID) {
-  listID = urlParams.get("id");
+if (!id) {
+  id = localData.id;
 }
 if (!secret) {
-  secret = urlParams.get("secret");
+  secret = localData.secret;
 }
 
-console.log(listID, secret);
+if (id && secret) {
+  localStorage.setItem("listmeta", JSON.stringify({ id, secret }));
+  history.pushState(null, "", `?id=${id}&secret=${secret}`);
 
-if (listID && secret) {
-  localStorage.setItem("listmeta", JSON.stringify({ listID, secret }));
-
-  fetch(`/api/list?id=${listID}&secret=${secret}`)
+  fetch(`/api/list?id=${id}&secret=${secret}`)
     .then((res) => res.json())
     .then((data) => {
-      console.log(data);
-      data.rows.forEach((item) => {
+      if (data.error) {
+        throw new Error(data.error);
+      }
+      data.rows?.forEach((item) => {
         listContainer.innerHTML += createNewListItem(
           item.id,
           item.title,
@@ -38,11 +41,27 @@ if (listID && secret) {
           item.done
         );
       });
+      newContainer.classList.add("hidden");
+      container.classList.remove("hidden");
+      listLabel.classList.remove("hidden");
     })
-    .catch(console.error);
+    .catch((err) => {
+      console.error(err);
+      id = null;
+      secret = null;
+    })
+    .then(() => {
+      if (!id) {
+        id = crypto.randomUUID();
+        uuidSpan.innerText = id;
+      }
+    });
+}
 
-  newContainer.classList.add("hidden");
-  container.classList.remove("hidden");
+if (!id) {
+  console.log("No id found");
+  id = crypto.randomUUID();
+  uuidSpan.innerText = id;
 }
 
 // ==========================================
@@ -57,14 +76,20 @@ newContainerForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const data = {
     ...Object.fromEntries(new FormData(newContainerForm)),
-    listID,
+    id,
   };
-  localStorage.setItem(
-    "listmeta",
-    JSON.stringify({ listID, secret: data.secret })
-  );
 
-  history.pushState(null, "", `?id=${listID}&secret=${data.secret}`);
+  if (!data.id || !data.secret) {
+    newContainerForm.classList.add("shake");
+    setTimeout(() => {
+      newContainerForm.classList.remove("shake");
+    }, 500);
+    return;
+  }
+
+  localStorage.setItem("listmeta", JSON.stringify({ id, secret: data.secret }));
+
+  history.pushState(null, "", `?id=${id}&secret=${data.secret}`);
 
   fetch("/api/list", {
     method: "POST",
@@ -74,9 +99,9 @@ newContainerForm.addEventListener("submit", (e) => {
     body: JSON.stringify(data),
   })
     .then((res) => {
-      console.log(res);
       container.classList.remove("hidden");
       newContainer.classList.add("hidden");
+      listLabel.classList.remove("hidden");
     })
     .catch(console.error);
 });
@@ -86,13 +111,12 @@ newContainerForm.addEventListener("submit", (e) => {
 // ==========================================
 shareButton.addEventListener("click", (e) => {
   e.preventDefault();
-  console.log("clicked");
   let data = JSON.parse(localStorage.getItem("listmeta") || "{}");
-  if (!data.listID || !data.secret) {
+  if (!data.id || !data.secret) {
     console.error("Contact the developer.");
     return;
   }
-  history.pushState(null, "", `?id=${data.listID}&secret=${data.secret}`);
+  history.pushState(null, "", `?id=${data.id}&secret=${data.secret}`);
   navigator.clipboard.writeText(window.location.href);
 });
 
@@ -101,7 +125,7 @@ shareButton.addEventListener("click", (e) => {
 // ==========================================
 
 const createNewListItem = (id, title, desc, done = false) => {
-  return `<div class="list-item ${done && "checked"}" data-id="${id}">
+  return `<div class="list-item ${done && "checked"}" data-rowid="${id}">
     <div class="list-item__row" data.id="${id}">
       <div class="list-item__move">:</div>
       <div class="list-item__title">${title}</div>
@@ -130,7 +154,7 @@ addItemForm.addEventListener("submit", (e) => {
     return;
   }
 
-  fetch(`/api/list/${listID}/row`, {
+  fetch(`/api/list/${id}/row`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -162,12 +186,12 @@ listContainer.addEventListener("click", (e) => {
     e.target.classList.contains("list-item__check") ||
     e.target.closest(".list-item__check")
   ) {
-    const id = e.target.closest(".list-item").dataset.id;
+    const rowId = e.target.closest(".list-item").dataset.rowid;
     const currentState = !e.target
       .closest(".list-item")
       .classList.contains("checked");
 
-    fetch(`/api/row/${id}?state=${currentState}`, {
+    fetch(`/api/row/${rowId}?state=${currentState}`, {
       method: "PATCH",
     })
       .then((res) => {
@@ -185,7 +209,7 @@ listContainer.addEventListener("click", (e) => {
     e.target.classList.contains("list-item__remove") ||
     e.target.closest(".list-item__remove")
   ) {
-    const rowID = e.target.closest(".list-item").dataset.id;
+    const rowID = e.target.closest(".list-item").dataset.rowid;
     fetch(`/api/row/${rowID}`, {
       method: "DELETE",
     })

@@ -10,11 +10,23 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
 
-	var DbAddr string = "postgres://admin:admin@localhost:6000/list_me?sslmode=disable"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+
+	var DbAddr string = os.Getenv("DB_ADDR")
+
+	if DbAddr == "" {
+		log.Fatalf("DB_ADDR is not set")
+	}
+
 	var Port string = ":3000"
 
 	storage, err := db.NewStorage(DbAddr)
