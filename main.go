@@ -29,7 +29,7 @@ func main() {
 	Port := os.Getenv("PORT")
 	if Port == "" {
 		log.Println("PORT environment variable not set, defaulting to 8080")
-		Port = "5999" // Default to port 8080 if not set
+		Port = "5999" 
 	}
 
 	storage, err := db.NewStorage(DbAddr)
