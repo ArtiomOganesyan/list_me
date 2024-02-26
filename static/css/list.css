@@ -1,0 +1,51 @@
+.list-container {
+  background-color: slategray;
+  padding: 2rem;
+}
+
+.list-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #113535;
+  width: 80%;
+  min-width: 300px;
+  max-width: 500px;
+  padding: 1rem;
+}
+
+.list-item__row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+}
+
+.list-item__title {
+  font-size: 1.5rem;
+  /* margin-bottom: 0.5rem; */
+  color: antiquewhite;
+  flex: 1;
+}
+
+.list-item__description {
+  font-size: 1rem;
+  color: rgb(174, 174, 174);
+}
+
+.list-item__move {
+  color: black;
+}
+
+.list-item__check {
+  color: greenyellow;
+}
+
+.list-item__remove {
+  color: orangered;
+}
+
+.checked {
+  text-decoration: line-through;
+  background-color: slategray;
+}

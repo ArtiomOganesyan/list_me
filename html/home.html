@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/new.css" />
+    <link rel="stylesheet" href="/static/css/list.css" />
+    <link rel="stylesheet" href="/static/css/input.css" />
+  </head>
+
+  <body>
+    <script defer src="/static/js/index.js"></script>
+
+    <div class="header">
+      <h1>ListMe</h1>
+      <h6 id="share">Share</h6>
+    </div>
+
+    <div class="new-container">
+      <h2>Create new list</h2>
+
+      <form name="new">
+        <label> List Id: <br /><span id="uuid"></span> </label>
+        <label>
+          Secret code:
+          <input
+            type="text"
+            name="secret"
+            id="description"
+            placeholder="Secret"
+          />
+        </label>
+        <button>Create</button>
+      </form>
+    </div>
+
+    <div id="container">
+      <div class="menu-top"></div>
+
+      <div class="list-container" id="list-container"></div>
+
+      <label id="label-show-input-container" for="show-input-container"
+        ><img src="/static/assets/list.svg" alt="" width="40px"
+      /></label>
+      <input type="checkbox" name="" id="show-input-container" / >
+
+      <div class="input-container">
+        <form name="add-item-form">
+          <input
+            type="text"
+            name="title"
+            id="item-input"
+            placeholder="What do we need?"
+          />
+          <textarea
+            name="description"
+            id="item-input"
+            placeholder="Additional information..."
+          ></textarea>
+          <button id="add-item-button">Add</button>
+        </form>
+      </div>
+
+      <div class="menu-bottom"></div>
+    </div>
+  </body>
+</html>

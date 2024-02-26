@@ -1,0 +1,98 @@
+.input-container {
+  position: fixed;
+  bottom: -600px;
+  background-color: rgba(255, 255, 255, 0.75);
+  width: 100dvw;
+  padding: 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  margin: 2rem 0;
+  gap: 1rem;
+  transition: all 0.5s;
+}
+
+#show-input-container {
+  display: none;
+}
+
+#show-input-container:checked ~ .input-container {
+  bottom: 5px;
+}
+
+#label-show-input-container {
+  font-size: 2rem;
+  cursor: pointer;
+  position: fixed;
+  z-index: 20;
+  bottom: 25px;
+  right: 10px;
+}
+
+#show-input-container:checked + #label-show-input-container {
+  bottom: 7rem;
+}
+
+.input-container > form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  transition: height 0.3s ease;
+}
+
+.shake {
+  animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  50% {
+    transform: translateX(5px);
+  }
+  75% {
+    transform: translateX(-5px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.input-container > form > input {
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  width: 80dvw;
+  border: 1px solid #333;
+  border-radius: 5px;
+}
+
+.input-container > form > textarea {
+  font-size: 1.25rem;
+  border: 1px solid #333;
+  border-radius: 5px;
+  width: 80dvw;
+  height: 3rem;
+  padding: 0.25rem;
+  transition: all 0.3s ease;
+}
+
+.input-container > form > textarea:focus {
+  height: 8rem;
+}
+
+.input-container > form > button {
+  padding: 0.5rem;
+  font-size: 1.25rem;
+  border: 1px solid #333;
+  border-radius: 5px;
+  background-color: #333;
+  color: white;
+  cursor: pointer;
+}
