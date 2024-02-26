@@ -17,17 +17,20 @@ import (
 // {th!2345
 func main() {
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+	if err := godotenv.Load(); err != nil {
+		log.Println("No .env file found or error loading .env file, assuming environment variables are set")
 	}
 
-	var DbAddr string = os.Getenv("DB_ADDR")
+	DbAddr := os.Getenv("DB_ADDR")
 	if DbAddr == "" {
-		log.Fatalf("DB_ADDR is not set")
+		log.Fatalf("DB_ADDR environment variable is not set. Application cannot start.")
 	}
 
-	var Port string = os.Getenv("PORT")
+	Port := os.Getenv("PORT")
+	if Port == "" {
+		log.Println("PORT environment variable not set, defaulting to 8080")
+		Port = "5999" // Default to port 8080 if not set
+	}
 
 	storage, err := db.NewStorage(DbAddr)
 	if err != nil {
