@@ -34,5 +34,5 @@ func (s *Server) Init() *http.Server {
 	r.HandleFunc("/api/row/{id}", s.ChangeRowState).Methods("PATCH")
 	r.HandleFunc("/api/row/{id}", s.DeleteRow).Methods("DELETE")
 
-	return &http.Server{Addr: s.Addr, Handler: r}
+	return &http.Server{Addr: ":" + s.Addr, Handler: r}
 }
