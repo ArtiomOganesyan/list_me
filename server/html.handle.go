@@ -10,6 +10,11 @@ import (
 func (s *Server) HandleHTML(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	element := vars["element"]
+
+	if element == "" {
+		element = "home"
+	}
+
 	fmt.Println("Handling HTML request for", element)
 	http.ServeFile(w, r, "html/"+element+".html")
 }

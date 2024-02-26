@@ -24,6 +24,8 @@ func (s *Server) Init() *http.Server {
 
 	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir("static"))))
 
+	r.HandleFunc("/", s.HandleHTML).Methods("GET")
+
 	// Serve HTML
 	r.HandleFunc("/{element}", s.HandleHTML).Methods("GET")
 
